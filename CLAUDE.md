@@ -13,5 +13,5 @@ bash -x ~/.claude/claude-notify.sh
 tmux show-options -w @claude_ready
 
 # Check the settings.json hooks
-cat ~/.claude/settings.json | jq .hooks
+node -e 'console.log(JSON.stringify(JSON.parse(require("fs").readFileSync(process.argv[1],"utf8")).hooks,null,2))' ~/.claude/settings.json
 ```
