@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# claude-tmux-notify uninstaller
-
 CLAUDE_DIR="$HOME/.claude"
 TMUX_CONF="$HOME/.tmux.conf"
 SETTINGS="$CLAUDE_DIR/settings.json"
@@ -33,7 +31,6 @@ fi
 
 # --- 4. Clear tmux state ---
 if tmux info &>/dev/null; then
-  # Unset @claude_ready on all windows
   tmux list-windows -a -F '#{window_id}' | while read -r wid; do
     tmux set-option -wu -t "$wid" @claude_ready 2>/dev/null || true
   done
