@@ -19,7 +19,14 @@ if [ -f "$SETTINGS" ]; then
   const fs = require("fs");
   const settings = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
   if (settings.hooks) {
-    delete settings.hooks.Stop;
+    for (const event of ["Stop", "Notification"]) {
+      if (settings.hooks[event]) {
+        settings.hooks[event] = settings.hooks[event].filter(h =>
+          !h.hooks || !h.hooks.some(c => c.command && c.command.includes("claude-notify.sh"))
+        );
+        if (settings.hooks[event].length === 0) delete settings.hooks[event];
+      }
+    }
     if (Object.keys(settings.hooks).length === 0) delete settings.hooks;
   }
   fs.writeFileSync(process.argv[1], JSON.stringify(settings, null, 2) + "\n");
@@ -40,7 +47,6 @@ if tmux info &>/dev/null; then
   tmux list-windows -a -F '#{window_id}' | while read -r wid; do
     tmux set-option -wu -t "$wid" @claude_ready 2>/dev/null || true
   done
-  tmux set-hook -gu after-select-window 2>/dev/null || true
   tmux source-file "$TMUX_CONF" 2>/dev/null || true
   echo "  Cleared tmux state and reloaded config"
 fi

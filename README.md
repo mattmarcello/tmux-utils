@@ -26,18 +26,19 @@ Or ask Claude Code:
 
 ## How it works
 
-A Claude Code [Stop hook](https://docs.anthropic.com/en/docs/claude-code/hooks) and a tmux window option (`@claude_ready`) work together:
+[Claude Code hooks](https://docs.anthropic.com/en/docs/claude-code/hooks) and a tmux window option (`@claude_ready`) work together:
 
 1. **Stop hook** — when Claude finishes a turn, sets `@claude_ready` on the window (skipped if you're already looking at it)
-2. **`window-status-format`** — tmux renders a yellow highlight on windows where `@claude_ready` is set
-3. **`after-select-window` hook** — clears `@claude_ready` when you switch to the window
+2. **Notification hook** — same, but also covers permission prompts and multiple-choice questions
+3. **`window-status-format`** — tmux renders a yellow highlight on windows where `@claude_ready` is set
+4. **`after-select-window` hook** — clears `@claude_ready` when you switch to the window
 
 ### Files touched
 
 | File | Change |
 |------|--------|
 | `~/.claude/claude-notify.sh` | New — sets `@claude_ready` on the tmux window |
-| `~/.claude/settings.json` | Adds `Stop` hook |
+| `~/.claude/settings.json` | Adds `Stop` and `Notification` hooks |
 | `~/.tmux.conf` | Appends `window-status-format` + `after-select-window` hook |
 
 ## Uninstall

@@ -23,14 +23,25 @@ node -e '
 const fs = require("fs");
 const settings = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
 if (!settings.hooks) settings.hooks = {};
-settings.hooks.Stop = [{
+
+const entry = {
   matcher: "",
   hooks: [{
     type: "command",
     command: "bash ~/.claude/claude-notify.sh",
     async: true
   }]
-}];
+};
+
+// Append to existing hook arrays instead of replacing
+for (const event of ["Stop", "Notification"]) {
+  if (!settings.hooks[event]) settings.hooks[event] = [];
+  const already = settings.hooks[event].some(h =>
+    h.hooks && h.hooks.some(c => c.command && c.command.includes("claude-notify.sh"))
+  );
+  if (!already) settings.hooks[event].push(entry);
+}
+
 fs.writeFileSync(process.argv[1], JSON.stringify(settings, null, 2) + "\n");
 ' "$SETTINGS"
 echo "  Configured hooks in $SETTINGS"
@@ -42,7 +53,7 @@ if [ ! -f "$TMUX_CONF" ]; then
   touch "$TMUX_CONF"
 fi
 
-TMUX_HOOK="set-hook -g after-select-window 'set-option -wu @claude_ready'"
+TMUX_HOOK="set-hook -ga after-select-window 'set-option -wu @claude_ready'"
 
 if ! grep -qF '@claude_ready' "$TMUX_CONF"; then
   printf '\n# Claude turn-complete indicator\n%s\n# Clear indicator when switching to a window\n%s\n' "$TMUX_LINE" "$TMUX_HOOK" >> "$TMUX_CONF"
