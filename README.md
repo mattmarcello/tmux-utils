@@ -10,14 +10,14 @@ Yellow tmux status bar indicator when Claude Code is waiting for your input. Opt
 ## Install
 
 ```bash
-git clone https://github.com/mpm/claude-tmux-notify.git
+git clone https://github.com/mattmarcello/claude-tmux-notify.git
 cd claude-tmux-notify
 bash install.sh
 ```
 
 Or ask Claude Code to do it:
 
-> Clone https://github.com/mpm/claude-tmux-notify and run the installer.
+> Clone https://github.com/mattmarcello/claude-tmux-notify and run the installer.
 
 ### Requirements
 
