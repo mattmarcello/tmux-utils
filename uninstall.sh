@@ -15,9 +15,16 @@ fi
 
 # --- 2. Remove hooks from settings.json ---
 if [ -f "$SETTINGS" ]; then
-  TMP="$(mktemp)"
-  jq 'del(.hooks.Stop) | del(.hooks.UserPromptSubmit) | if .hooks == {} then del(.hooks) else . end' \
-    "$SETTINGS" > "$TMP" && mv "$TMP" "$SETTINGS"
+  node -e '
+  const fs = require("fs");
+  const settings = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+  if (settings.hooks) {
+    delete settings.hooks.Stop;
+    delete settings.hooks.UserPromptSubmit;
+    if (Object.keys(settings.hooks).length === 0) delete settings.hooks;
+  }
+  fs.writeFileSync(process.argv[1], JSON.stringify(settings, null, 2) + "\n");
+  ' "$SETTINGS"
   echo "  Removed hooks from $SETTINGS"
 fi
 

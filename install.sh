@@ -19,32 +19,27 @@ if [ ! -f "$SETTINGS" ]; then
   echo '{}' > "$SETTINGS"
 fi
 
-TMP="$(mktemp)"
-jq '
-  .hooks.Stop = [
-    {
-      "matcher": "",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "bash ~/.claude/claude-notify.sh",
-          "async": true
-        }
-      ]
-    }
-  ] |
-  .hooks.UserPromptSubmit = [
-    {
-      "matcher": "",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "[ -n \"$TMUX_PANE\" ] && tmux set-option -wu -t \"$TMUX_PANE\" @claude_ready 2>/dev/null; true"
-        }
-      ]
-    }
-  ]
-' "$SETTINGS" > "$TMP" && mv "$TMP" "$SETTINGS"
+node -e '
+const fs = require("fs");
+const settings = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+if (!settings.hooks) settings.hooks = {};
+settings.hooks.Stop = [{
+  matcher: "",
+  hooks: [{
+    type: "command",
+    command: "bash ~/.claude/claude-notify.sh",
+    async: true
+  }]
+}];
+settings.hooks.UserPromptSubmit = [{
+  matcher: "",
+  hooks: [{
+    type: "command",
+    command: "[ -n \"$TMUX_PANE\" ] && tmux set-option -wu -t \"$TMUX_PANE\" @claude_ready 2>/dev/null; true"
+  }]
+}];
+fs.writeFileSync(process.argv[1], JSON.stringify(settings, null, 2) + "\n");
+' "$SETTINGS"
 echo "  Configured hooks in $SETTINGS"
 
 # --- 3. Add tmux status format ---

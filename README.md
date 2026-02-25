@@ -22,7 +22,7 @@ Or ask Claude Code:
 ### Requirements
 
 - tmux
-- jq (for editing settings.json)
+- node (Claude Code requires it, so you already have it)
 
 ## How it works
 
