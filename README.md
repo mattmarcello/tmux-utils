@@ -2,9 +2,7 @@
 
 Tmux utilities for working with AI coding agents (Claude Code, etc.).
 
-## Tools
-
-### tmux-dev
+## tmux-dev
 
 Manage dev processes in named tmux panes. Start servers, read their logs, and kill them by name.
 
@@ -33,7 +31,13 @@ tmux-dev list                  # See what's running
 - The caller's environment is synced to the tmux session via `set-environment`, so env vars from direnv, `.env` files, or manual exports are available in the new pane.
 - Panes survive agent session restarts. A new session can discover running panes with `tmux-dev list` and read their logs immediately.
 
-### claude-notify
+**Install:**
+
+```bash
+cp tmux-dev/tmux-dev ~/.local/bin/
+```
+
+## claude-notify
 
 Yellow tmux status bar indicator when Claude Code is waiting for your input.
 
@@ -44,31 +48,16 @@ Yellow tmux status bar indicator when Claude Code is waiting for your input.
 
 Uses [Claude Code hooks](https://docs.anthropic.com/en/docs/claude-code/hooks) to set a tmux window option (`@claude_ready`) when Claude finishes a turn, and a `window-status-format` to render the indicator.
 
-## Install
+**Install:**
 
 ```bash
-git clone https://github.com/mattmarcello/tmux-utils.git
-cd tmux-utils
+bash claude-notify/install.sh
 ```
 
-**tmux-dev** — copy to your PATH:
+**Uninstall:**
 
 ```bash
-cp tmux-dev ~/.local/bin/
-```
-
-**claude-notify** — run the installer (configures hooks + tmux):
-
-```bash
-bash install.sh
-```
-
-## Uninstall
-
-**claude-notify:**
-
-```bash
-bash uninstall.sh
+bash claude-notify/uninstall.sh
 ```
 
 ## Requirements
